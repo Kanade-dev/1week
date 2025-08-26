@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1Week Music Challenge</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">1Week<br><span class="subtitle">Music Challenge</span></h1>
+            <p class="description">1週間で1分程度の楽曲制作チャレンジ</p>
+        </header>
+
+        <main class="main">
+            <div class="challenge-card">
+                <div class="card-header">
+                    <h2 class="card-title">今週のお題</h2>
+                </div>
+                
+                <div class="result-area" id="resultArea">
+                    <div class="result-item" id="chordResult">
+                        <h3 class="result-label">コード進行</h3>
+                        <p class="result-value" id="chordValue">ボタンを押してお題を決めよう</p>
+                    </div>
+                    
+                    <div class="result-item" id="instrumentResult">
+                        <h3 class="result-label">使用楽器</h3>
+                        <p class="result-value" id="instrumentValue">ボタンを押してお題を決めよう</p>
+                    </div>
+                </div>
+
+                <button class="generate-btn" id="generateBtn">
+                    <span class="btn-text">お題を決める</span>
+                    <div class="btn-overlay"></div>
+                </button>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 1Week Music Challenge</p>
+        </footer>
+    </div>
+
+    <div class="background-elements">
+        <div class="bg-element bg-element-1"></div>
+        <div class="bg-element bg-element-2"></div>
+        <div class="bg-element bg-element-3"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
