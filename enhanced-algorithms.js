@@ -861,12 +861,16 @@ class FunctionalHarmonyGenerator {
      */
     static calculateComplexity(functions) {
         const uniqueFunctions = new Set(functions);
-        const transitions = functions.length - 1;
-        return {
-            uniqueFunctions: uniqueFunctions.size,
-            totalTransitions: transitions,
-            complexity: uniqueFunctions.size / functions.length
-        };
+        const complexityRatio = uniqueFunctions.size / functions.length;
+        
+        // 複雑度レベルの判定
+        if (complexityRatio <= 0.5) {
+            return 'beginner';    // 繰り返しが多い、シンプルな進行
+        } else if (complexityRatio <= 0.75) {
+            return 'intermediate'; // 適度な変化がある進行
+        } else {
+            return 'advanced';    // 多様な機能が使われている進行
+        }
     }
 }
 
