@@ -330,20 +330,20 @@ class MarkovChainChordGenerator {
      * コード進行の学習データから遷移行列を構築
      */
     static buildTransitionMatrix() {
-        // 既存のコード進行データから学習
+        // 既存のコード進行データから学習（音楽理論に準拠した修正版）
         const trainingData = [
             ['C', 'Am', 'F', 'G'],
             ['Am', 'F', 'C', 'G'],
             ['C', 'F', 'Am', 'G'],
-            ['G', 'Am', 'F', 'C'],
+            ['Am', 'F', 'G', 'C'],      // 修正: V開始を避ける
             ['F', 'C', 'G', 'Am'],
-            ['Em', 'Am', 'D', 'G'],
+            ['Em', 'Am', 'Dm', 'G'],    // 修正: D(II)をDm(ii)に変更
             ['C', 'G', 'Am', 'F'],
             ['Am', 'Dm', 'G', 'C'],
             ['F', 'G', 'Em', 'Am'],
             ['C', 'Am', 'Dm', 'G'],
             ['Dm', 'G', 'C', 'Am'],
-            ['G', 'Em', 'C', 'D'],
+            ['Am', 'Em', 'C', 'G'],     // 修正: V開始と不適切な終止を避ける
             ['Am', 'F', 'G', 'Em'],
             ['C', 'Em', 'F', 'G'],
             ['F', 'Am', 'G', 'C']
@@ -389,25 +389,34 @@ class MarkovChainChordGenerator {
         const length = options.length || 4;
         const targetKey = options.key || 'C';
         
-        // 開始コードの決定
+        // 開始コードの決定（音楽理論に基づく適切な開始音）
         let currentChord = options.startChord;
         if (!currentChord) {
-            const startCandidates = ['C', 'Am', 'F', 'G', 'Dm', 'Em'];
+            // トニック機能(I, iii, vi)とサブドミナント機能(ii, IV)から選択
+            const startCandidates = ['C', 'Am', 'F', 'Dm', 'Em'];
             currentChord = startCandidates[Math.floor(Math.random() * startCandidates.length)];
         }
 
         const progression = [currentChord];
 
-        // マルコフ連鎖による次のコード選択
+        // マルコフ連鎖による次のコード選択（重複回避機能付き）
         for (let i = 1; i < length; i++) {
-            const nextChord = this.selectNextChord(currentChord, transitions);
+            const nextChord = this.selectNextChord(currentChord, transitions, progression);
             if (nextChord) {
                 progression.push(nextChord);
                 currentChord = nextChord;
             } else {
-                // フォールバック: ランダム選択
-                const allChords = Object.keys(transitions);
-                currentChord = allChords[Math.floor(Math.random() * allChords.length)];
+                // フォールバック: 音楽理論に基づく適切なコード選択
+                const appropriateChords = ['C', 'Am', 'F', 'Dm', 'Em'].filter(chord => 
+                    chord !== currentChord && !progression.includes(chord)
+                );
+                if (appropriateChords.length > 0) {
+                    currentChord = appropriateChords[Math.floor(Math.random() * appropriateChords.length)];
+                } else {
+                    // 最終的なフォールバック
+                    const allChords = Object.keys(transitions);
+                    currentChord = allChords[Math.floor(Math.random() * allChords.length)];
+                }
                 progression.push(currentChord);
             }
         }
@@ -426,16 +435,38 @@ class MarkovChainChordGenerator {
     }
 
     /**
-     * 確率的に次のコードを選択
+     * 確率的に次のコードを選択（重複回避機能付き）
      */
-    static selectNextChord(currentChord, transitions) {
+    static selectNextChord(currentChord, transitions, progression = []) {
         const nextChords = transitions[currentChord];
         if (!nextChords) return null;
+
+        // 短いプログレッション（4コード以下）では重複を避ける
+        const avoidDuplicates = progression.length <= 4;
+        const availableChords = avoidDuplicates 
+            ? Object.entries(nextChords).filter(([chord]) => !progression.includes(chord))
+            : Object.entries(nextChords);
+
+        if (availableChords.length === 0) {
+            // 重複回避で選択肢がない場合は、元の選択肢を使用
+            return this.selectFromProbabilityDistribution(Object.entries(nextChords));
+        }
+
+        return this.selectFromProbabilityDistribution(availableChords);
+    }
+
+    /**
+     * 確率分布から選択
+     */
+    static selectFromProbabilityDistribution(chordProbabilityPairs) {
+        // 確率を正規化
+        const totalProbability = chordProbabilityPairs.reduce((sum, [, prob]) => sum + prob, 0);
+        const normalizedPairs = chordProbabilityPairs.map(([chord, prob]) => [chord, prob / totalProbability]);
 
         const random = Math.random();
         let cumulativeProbability = 0;
 
-        for (const [chord, probability] of Object.entries(nextChords)) {
+        for (const [chord, probability] of normalizedPairs) {
             cumulativeProbability += probability;
             if (random <= cumulativeProbability) {
                 return chord;
@@ -443,7 +474,7 @@ class MarkovChainChordGenerator {
         }
 
         // フォールバック
-        return Object.keys(nextChords)[0];
+        return chordProbabilityPairs[0][0];
     }
 
     /**
