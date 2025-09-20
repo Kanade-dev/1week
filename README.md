@@ -2,6 +2,8 @@
 
 🎵 1週間で1分程度の楽曲制作チャレンジのお題決めアプリ
 
+**🌐 Live Demo: [https://kanade-dev.github.io/1week/](https://kanade-dev.github.io/1week/)**
+
 ## 概要
 
 このアプリは、毎週の楽曲制作チャレンジのために、コード進行と使用楽器をランダムに選出するWebアプリケーションです。
@@ -58,12 +60,20 @@
 
 ## デプロイ
 
-GitHub Pagesで簡単にデプロイできます：
+### GitHub Pages（推奨）
 
-1. リポジトリのSettings > Pages
-2. Source を "Deploy from a branch" に設定
-3. Branch を "main" に設定
-4. 保存後、自動でデプロイ完了
+このアプリは GitHub Pages で公開されています：
+**🌐 [https://kanade-dev.github.io/1week/](https://kanade-dev.github.io/1week/)**
+
+#### 自分でデプロイする場合
+
+1. このリポジトリをフォーク
+2. リポジトリの Settings > Pages
+3. Source を "Deploy from a branch" に設定
+4. Branch を "main" に設定
+5. 保存後、自動でデプロイ完了
+
+GitHub Actions による自動デプロイも設定済みです。
 
 ## ローカル開発
 
