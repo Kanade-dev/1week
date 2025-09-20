@@ -1,0 +1,31 @@
+# GitHub Pages Configuration for 1Week Music Challenge
+
+title: 1Week Music Challenge
+description: 1週間で1分程度の楽曲制作チャレンジのお題決めアプリ
+url: "https://kanade-dev.github.io"
+baseurl: "/1week"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# GitHub Pages settings
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Exclude files
+exclude:
+  - README.md
+  - ALGORITHMS.md
+  - .gitignore
+  - node_modules/
+  - package*.json
+
+# Include files
+include:
+  - _redirects
+
+# SEO settings
+lang: ja
+author: Kanade-dev

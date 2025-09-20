@@ -39,3 +39,9 @@ Thumbs.db
 # Build artifacts
 dist/
 build/
+
+# GitHub Pages
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
