@@ -54,11 +54,42 @@
                     <div class="result-item" id="chordResult">
                         <h3 class="result-label">コード進行</h3>
                         <p class="result-value" id="chordValue">ボタンを押してお題を決めよう</p>
+                        <div class="result-details" id="chordDetails" style="display: none;">
+                            <p class="detail-item"><span class="detail-label">キー:</span> <span id="keyValue">-</span></p>
+                            <p class="detail-item"><span class="detail-label">テンポ:</span> <span id="tempoValue">-</span></p>
+                            <p class="detail-item"><span class="detail-label">進行名:</span> <span id="progressionName">-</span></p>
+                        </div>
                     </div>
                     
                     <div class="result-item" id="instrumentResult">
                         <h3 class="result-label">使用楽器</h3>
                         <p class="result-value" id="instrumentValue">ボタンを押してお題を決めよう</p>
+                        <div class="result-details" id="instrumentDetails" style="display: none;">
+                            <p class="detail-item"><span class="detail-label">ジャンル:</span> <span id="genreValue">-</span></p>
+                            <p class="detail-item"><span class="detail-label">編成:</span> <span id="ensembleValue">-</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="result-item" id="analysisResult" style="display: none;">
+                        <h3 class="result-label">楽曲分析</h3>
+                        <div class="analysis-grid">
+                            <div class="analysis-item">
+                                <span class="analysis-label">複雑度:</span>
+                                <span id="complexityValue">-</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">ムード:</span>
+                                <span id="moodValue">-</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">ジャンル適合:</span>
+                                <span id="genreFitValue">-</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">教育価値:</span>
+                                <span id="educationValue">-</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

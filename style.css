@@ -425,3 +425,95 @@ body {
         display: none;
     }
 }
+
+/* Enhanced Result Details */
+.result-details {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border-light);
+}
+
+.detail-item {
+    margin: 0.5rem 0;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.detail-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-right: 0.5rem;
+}
+
+/* Analysis Grid */
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.analysis-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0.75rem;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+}
+
+.analysis-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+}
+
+.analysis-item span:last-child {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Value Badges */
+.complexity-beginner { color: #22c55e; }
+.complexity-intermediate { color: #f59e0b; }
+.complexity-advanced { color: #ef4444; }
+
+.mood-bright { color: #06b6d4; }
+.mood-emotional { color: #ec4899; }
+.mood-sophisticated { color: #8b5cf6; }
+.mood-classic { color: #6366f1; }
+.mood-bluesy { color: #3b82f6; }
+.mood-ascending { color: #10b981; }
+.mood-descending { color: #f97316; }
+.mood-dramatic { color: #dc2626; }
+
+.genre-fit-excellent { color: #22c55e; }
+.genre-fit-good { color: #84cc16; }
+.genre-fit-fair { color: #f59e0b; }
+.genre-fit-poor { color: #ef4444; }
+
+.education-high { color: #22c55e; }
+.education-medium { color: #f59e0b; }
+.education-low { color: #ef4444; }
+
+@media (max-width: 768px) {
+    .analysis-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+    
+    .analysis-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+    
+    .analysis-label {
+        margin-bottom: 0;
+    }
+}

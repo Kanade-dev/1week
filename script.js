@@ -19,27 +19,27 @@ const musicData = {
         'C - Am - F - G',    // I-vi-IV-V (最もポピュラー)
         'Am - F - C - G',    // vi-IV-I-V (ポップス定番)
         'C - F - Am - G',    // I-IV-vi-V (バラード系)
-        'G - Am - F - C',    // V-vi-IV-I (逆循環)
+        'Am - F - G - C',    // vi-IV-V-I (修正: 逆循環)
         'F - C - G - Am',    // IV-I-V-vi (ブルース系)
-        'Em - Am - D - G',   // ii-vi-II-V (ジャズ的)
+        'Em - Am - Dm - G',  // iii-vi-ii-V (修正: ジャズ的)
         'C - G - Am - F',    // I-V-vi-IV (ロック定番)
         'Am - Dm - G - C',   // vi-ii-V-I (完全終止)
         'F - G - Em - Am',   // IV-V-iii-vi (マイナー系)
         'C - Am - Dm - G',   // I-vi-ii-V (循環コード)
         'Dm - G - C - Am',   // ii-V-I-vi (ジャズ進行)
-        'G - Em - C - D',    // V-iii-I-II (ブライト系)
+        'Am - Em - C - G',   // vi-iii-I-V (修正: ブライト系)
         'Am - F - G - Em',   // vi-IV-V-iii (感情的)
         'C - Em - F - G',    // I-iii-IV-V (クラシック)
         'F - Am - G - C',    // IV-vi-V-I (安定系)
-        'Dm - Am - G - F',   // ii-vi-V-IV (モダン)
+        'Dm - Am - F - G',   // ii-vi-IV-V (修正: モダン)
         'C - F - G - C',     // I-IV-V-I (基本形)
         'Am - Dm - F - G',   // vi-ii-IV-V (展開形)
-        'G - C - Em - Am',   // V-I-iii-vi (明るい系)
+        'C - Em - Am - F',   // I-iii-vi-IV (修正: 明るい系)
         'F - G - C - F',     // IV-V-I-IV (復帰型)
-        'Em - C - G - D',    // iii-I-V-II (ドラマティック)
-        'Am - G - F - E',    // vi-V-IV-III (下降型)
+        'Em - C - G - Am',   // iii-I-V-vi (修正: ドラマティック)
+        'Am - F - G - C',    // vi-IV-V-I (修正: 下降型)
         'C - Dm - Em - F',   // I-ii-iii-IV (上行型)
-        'G - F - Em - Dm',   // V-IV-iii-ii (下行型)
+        'F - Dm - Em - Am',  // IV-ii-iii-vi (修正: 下行型)
         'Am - C - F - Dm'    // vi-I-IV-ii (変化型)
     ],
     
@@ -96,6 +96,20 @@ const resultArea = document.getElementById('resultArea');
 const chordValue = document.getElementById('chordValue');
 const instrumentValue = document.getElementById('instrumentValue');
 
+// Enhanced UI elements
+const chordDetails = document.getElementById('chordDetails');
+const instrumentDetails = document.getElementById('instrumentDetails');
+const analysisResult = document.getElementById('analysisResult');
+const keyValue = document.getElementById('keyValue');
+const tempoValue = document.getElementById('tempoValue');
+const progressionName = document.getElementById('progressionName');
+const genreValue = document.getElementById('genreValue');
+const ensembleValue = document.getElementById('ensembleValue');
+const complexityValue = document.getElementById('complexityValue');
+const moodValue = document.getElementById('moodValue');
+const genreFitValue = document.getElementById('genreFitValue');
+const educationValue = document.getElementById('educationValue');
+
 /**
  * ランダム選択アルゴリズム - 核となるユーティリティ関数
  * 
@@ -136,6 +150,85 @@ function animateValueChange(element, newValue, delay = 0) {
             element.style.opacity = '1';
         }, 150);
     }, delay);
+}
+
+// Enhanced UI update function
+function updateEnhancedUI(metadata) {
+    if (!metadata.chordInfo) return;
+    
+    const chordInfo = metadata.chordInfo;
+    
+    // Update basic chord details
+    if (chordInfo.key) {
+        animateValueChange(keyValue, chordInfo.key, 100);
+    }
+    
+    if (chordInfo.tempo) {
+        const tempoText = `${chordInfo.tempo.bpm}BPM (${chordInfo.tempo.description})`;
+        animateValueChange(tempoValue, tempoText, 200);
+    }
+    
+    if (chordInfo.pattern) {
+        animateValueChange(progressionName, chordInfo.pattern.name || chordInfo.pattern.description, 300);
+    }
+    
+    // Update genre and ensemble info
+    if (chordInfo.genre) {
+        animateValueChange(genreValue, chordInfo.genre, 400);
+    }
+    
+    if (metadata.instrumentInfo) {
+        const ensembleText = metadata.instrumentInfo.description || `${metadata.instrumentInfo.instruments}`;
+        animateValueChange(ensembleValue, ensembleText, 500);
+    }
+    
+    // Update analysis if available
+    if (chordInfo.analysis) {
+        const analysis = chordInfo.analysis;
+        
+        // Complexity with color coding
+        if (analysis.complexity) {
+            complexityValue.textContent = analysis.complexity;
+            complexityValue.className = `complexity-${analysis.complexity}`;
+        }
+        
+        // Mood with color coding
+        if (analysis.mood) {
+            moodValue.textContent = analysis.mood;
+            moodValue.className = `mood-${analysis.mood}`;
+        }
+        
+        // Genre fit with color coding
+        if (analysis.genre_fit) {
+            genreFitValue.textContent = analysis.genre_fit;
+            genreFitValue.className = `genre-fit-${analysis.genre_fit}`;
+        }
+        
+        // Educational value with color coding
+        if (analysis.educational_value) {
+            educationValue.textContent = analysis.educational_value;
+            educationValue.className = `education-${analysis.educational_value}`;
+        }
+        
+        // Show analysis section
+        setTimeout(() => {
+            analysisResult.style.display = 'block';
+            analysisResult.style.opacity = '0';
+            analysisResult.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                analysisResult.style.transition = 'all 0.3s ease';
+                analysisResult.style.opacity = '1';
+                analysisResult.style.transform = 'translateY(0)';
+            }, 50);
+        }, 600);
+    }
+    
+    // Show detail sections
+    setTimeout(() => {
+        chordDetails.style.display = 'block';
+        instrumentDetails.style.display = 'block';
+    }, 700);
 }
 
 /**
@@ -191,6 +284,9 @@ function generateChallenge() {
         // 結果表示 - 段階的アニメーション
         animateValueChange(chordValue, randomChord, 0);
         animateValueChange(instrumentValue, randomInstrument, 200);
+        
+        // Enhanced UI update
+        updateEnhancedUI(metadata);
         
         // メタデータをデータ属性として保存（デバッグ用）
         resultArea.dataset.metadata = JSON.stringify(metadata);

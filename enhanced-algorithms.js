@@ -6,7 +6,7 @@
  */
 
 /**
- * 音楽理論データベース - Music Theory Database
+ * 拡張音楽理論データベース - Enhanced Music Theory Database
  */
 const musicTheory = {
     // 各キーのスケール定義
@@ -19,24 +19,47 @@ const musicTheory = {
         'F': { major: ['F', 'Gm', 'Am', 'Bb', 'C', 'Dm', 'Edim'], relative_minor: 'Dm' }
     },
 
+    // テンポ範囲定義
+    tempos: {
+        'ballad': { min: 60, max: 80, description: 'バラード' },
+        'mid-tempo': { min: 90, max: 120, description: 'ミディアムテンポ' },
+        'upbeat': { min: 130, max: 160, description: 'アップビート' },
+        'fast': { min: 170, max: 200, description: 'ファスト' }
+    },
+
+    // コード拡張定義
+    chordExtensions: {
+        basic: [],
+        seventh: ['7', 'maj7', 'm7'],
+        extended: ['add9', 'sus4', 'sus2'],
+        jazz: ['9', '11', '13', 'maj9', 'm9']
+    },
+
+    // 楽曲構成要素
+    songStructures: {
+        simple: ['verse', 'chorus'],
+        standard: ['intro', 'verse', 'chorus', 'verse', 'chorus', 'outro'],
+        complex: ['intro', 'verse', 'prechorus', 'chorus', 'verse', 'prechorus', 'chorus', 'bridge', 'chorus', 'outro']
+    },
+
     // コード進行パターン（度数表記）
     progressionPatterns: [
-        { name: 'ポップス王道', pattern: [0, 5, 3, 4], description: 'I-vi-IV-V' },
-        { name: 'カノン進行', pattern: [0, 4, 5, 3, 0, 3, 4, 4], description: 'I-V-vi-IV-I-IV-V-V' },
-        { name: '小室進行', pattern: [5, 3, 4, 0], description: 'vi-IV-V-I' },
-        { name: 'ジャズ循環', pattern: [0, 5, 1, 4], description: 'I-vi-ii-V' },
-        { name: 'ブルース', pattern: [0, 0, 3, 0, 4, 3, 0, 4], description: '12小節ブルース' },
-        { name: 'ダイアトニック上行', pattern: [0, 1, 2, 3], description: 'I-ii-iii-IV' },
-        { name: 'ダイアトニック下行', pattern: [4, 3, 2, 1], description: 'V-IV-iii-ii' },
-        { name: 'ドミナント連鎖', pattern: [0, 6, 3, 4], description: 'I-vii°-IV-V' }
+        { name: 'ポップス王道', pattern: [0, 5, 3, 4], description: 'I-vi-IV-V', complexity: 'beginner', mood: 'bright' },
+        { name: 'カノン進行', pattern: [0, 4, 5, 3, 0, 3, 4, 4], description: 'I-V-vi-IV-I-IV-V-V', complexity: 'intermediate', mood: 'classic' },
+        { name: '小室進行', pattern: [5, 3, 4, 0], description: 'vi-IV-V-I', complexity: 'beginner', mood: 'emotional' },
+        { name: 'ジャズ循環', pattern: [0, 5, 1, 4], description: 'I-vi-ii-V', complexity: 'intermediate', mood: 'sophisticated' },
+        { name: 'ブルース', pattern: [0, 0, 3, 0, 4, 3, 0, 4], description: '12小節ブルース', complexity: 'intermediate', mood: 'bluesy' },
+        { name: 'ダイアトニック上行', pattern: [0, 1, 2, 3], description: 'I-ii-iii-IV', complexity: 'beginner', mood: 'ascending' },
+        { name: 'ダイアトニック下行', pattern: [4, 3, 2, 1], description: 'V-IV-iii-ii', complexity: 'intermediate', mood: 'descending' },
+        { name: 'ドミナント連鎖', pattern: [0, 6, 3, 4], description: 'I-vii°-IV-V', complexity: 'advanced', mood: 'dramatic' }
     ],
 
     // ジャンル別コード進行の重み
     genreWeights: {
-        'pop': { patterns: [0, 1, 2], weight: [0.4, 0.3, 0.3] },
-        'jazz': { patterns: [3, 4], weight: [0.6, 0.4] },
-        'rock': { patterns: [0, 2, 6], weight: [0.5, 0.3, 0.2] },
-        'classical': { patterns: [5, 6, 7], weight: [0.4, 0.3, 0.3] }
+        'pop': { patterns: [0, 1, 2], weight: [0.4, 0.3, 0.3], tempos: ['mid-tempo', 'upbeat'], extensions: 'basic' },
+        'jazz': { patterns: [3, 4], weight: [0.6, 0.4], tempos: ['ballad', 'mid-tempo'], extensions: 'jazz' },
+        'rock': { patterns: [0, 2, 6], weight: [0.5, 0.3, 0.2], tempos: ['upbeat', 'fast'], extensions: 'basic' },
+        'classical': { patterns: [5, 6, 7], weight: [0.4, 0.3, 0.3], tempos: ['ballad', 'mid-tempo'], extensions: 'seventh' }
     }
 };
 
@@ -97,7 +120,7 @@ const instrumentDatabase = {
 
 /**
  * 拡張コード進行生成アルゴリズム
- * 音楽理論に基づいて動的にコード進行を生成
+ * 音楽理論に基づいて動的にコード進行を生成（テンポ・拡張・構成要素付き）
  */
 class EnhancedChordProgressionGenerator {
     /**
@@ -106,25 +129,45 @@ class EnhancedChordProgressionGenerator {
      * @param {string} options.key - キー (省略時はランダム)
      * @param {string} options.genre - ジャンル (省略時はランダム)
      * @param {number} options.length - 長さ (デフォルト: 4)
+     * @param {boolean} options.includeExtensions - コード拡張を含むか (デフォルト: true)
      * @returns {Object} 生成されたコード進行情報
      */
     static generate(options = {}) {
         const key = options.key || this.selectRandomKey();
         const genre = options.genre || this.selectRandomGenre();
         const length = options.length || 4;
+        const includeExtensions = options.includeExtensions !== false;
 
         // ジャンルに基づくパターン選択
         const pattern = this.selectPatternByGenre(genre);
         
         // パターンを指定キーに変換
-        const chords = this.convertPatternToChords(pattern, key, length);
+        const basicChords = this.convertPatternToChords(pattern, key, length);
         
+        // コード拡張の適用
+        const chords = includeExtensions ? 
+            this.applyChordExtensions(basicChords, genre) : 
+            basicChords;
+        
+        // テンポ生成
+        const tempo = this.generateTempo(genre);
+        
+        // 楽曲構成要素の提案
+        const structure = this.suggestSongStructure(pattern.complexity);
+        
+        // 進行の分析
+        const analysis = this.analyzeProgression(pattern, tempo, genre);
+
         return {
             chords: chords.join(' - '),
+            basicChords: basicChords.join(' - '),
             key: key,
             genre: genre,
+            tempo: tempo,
             pattern: pattern,
-            description: this.getProgressionDescription(pattern, genre)
+            structure: structure,
+            analysis: analysis,
+            description: this.getProgressionDescription(pattern, genre, tempo)
         };
     }
 
@@ -180,10 +223,135 @@ class EnhancedChordProgressionGenerator {
     }
 
     /**
+     * コード拡張の適用
+     */
+    static applyChordExtensions(chords, genre) {
+        const genreData = musicTheory.genreWeights[genre];
+        const extensionType = genreData?.extensions || 'basic';
+        const extensions = musicTheory.chordExtensions[extensionType] || [];
+        
+        if (extensions.length === 0) return chords;
+        
+        return chords.map((chord, index) => {
+            // 30%の確率でコード拡張を適用（最初と最後のコードは基本形を保持）
+            if (index === 0 || index === chords.length - 1) return chord;
+            if (Math.random() < 0.3) {
+                const extension = extensions[Math.floor(Math.random() * extensions.length)];
+                return `${chord}${extension}`;
+            }
+            return chord;
+        });
+    }
+
+    /**
+     * テンポ生成
+     */
+    static generateTempo(genre) {
+        const genreData = musicTheory.genreWeights[genre];
+        const tempoTypes = genreData?.tempos || ['mid-tempo'];
+        const selectedType = tempoTypes[Math.floor(Math.random() * tempoTypes.length)];
+        const tempoRange = musicTheory.tempos[selectedType];
+        
+        const bpm = Math.floor(Math.random() * (tempoRange.max - tempoRange.min + 1)) + tempoRange.min;
+        
+        return {
+            bpm: bpm,
+            type: selectedType,
+            description: tempoRange.description
+        };
+    }
+
+    /**
+     * 楽曲構成の提案
+     */
+    static suggestSongStructure(complexity) {
+        const structureMap = {
+            'beginner': 'simple',
+            'intermediate': 'standard',
+            'advanced': 'complex'
+        };
+        
+        const structureType = structureMap[complexity] || 'standard';
+        const structure = musicTheory.songStructures[structureType];
+        
+        return {
+            type: structureType,
+            sections: structure,
+            description: this.getStructureDescription(structureType)
+        };
+    }
+
+    /**
+     * 進行の音楽的分析
+     */
+    static analyzeProgression(pattern, tempo, genre) {
+        return {
+            complexity: pattern.complexity,
+            mood: pattern.mood,
+            harmonic_rhythm: this.calculateHarmonicRhythm(tempo.bpm),
+            genre_fit: this.calculateGenreFit(pattern, genre),
+            educational_value: this.calculateEducationalValue(pattern.complexity)
+        };
+    }
+
+    /**
+     * ハーモニックリズムの計算
+     */
+    static calculateHarmonicRhythm(bpm) {
+        if (bpm < 80) return 'slow';
+        if (bpm < 120) return 'moderate';
+        if (bpm < 160) return 'fast';
+        return 'very_fast';
+    }
+
+    /**
+     * ジャンル適合度の計算
+     */
+    static calculateGenreFit(pattern, genre) {
+        const genreData = musicTheory.genreWeights[genre];
+        if (!genreData) return 'unknown';
+        
+        // パターンがジャンルの推奨パターンに含まれているかチェック
+        const patternIndex = musicTheory.progressionPatterns.indexOf(pattern);
+        if (genreData.patterns.includes(patternIndex)) {
+            const weightIndex = genreData.patterns.indexOf(patternIndex);
+            const weight = genreData.weight[weightIndex];
+            if (weight > 0.3) return 'excellent';
+            if (weight > 0.1) return 'good';
+            return 'fair';
+        }
+        return 'poor';
+    }
+
+    /**
+     * 教育的価値の計算
+     */
+    static calculateEducationalValue(complexity) {
+        const valueMap = {
+            'beginner': 'high',
+            'intermediate': 'medium',
+            'advanced': 'low'
+        };
+        return valueMap[complexity] || 'medium';
+    }
+
+    /**
+     * 構成の説明文生成
+     */
+    static getStructureDescription(structureType) {
+        const descriptions = {
+            'simple': 'シンプルな2セクション構成',
+            'standard': '標準的なポップス構成',
+            'complex': '複雑な多セクション構成'
+        };
+        return descriptions[structureType] || '標準構成';
+    }
+
+    /**
      * コード進行の説明文生成
      */
-    static getProgressionDescription(pattern, genre) {
-        return `${genre}スタイル: ${pattern.description}`;
+    static getProgressionDescription(pattern, genre, tempo) {
+        return `${genre}スタイル: ${pattern.description} (${tempo.description} ${tempo.bpm}BPM)`;
     }
 }
 
@@ -330,20 +498,20 @@ class MarkovChainChordGenerator {
      * コード進行の学習データから遷移行列を構築
      */
     static buildTransitionMatrix() {
-        // 既存のコード進行データから学習
+        // 既存のコード進行データから学習（音楽理論に準拠した修正版）
         const trainingData = [
             ['C', 'Am', 'F', 'G'],
             ['Am', 'F', 'C', 'G'],
             ['C', 'F', 'Am', 'G'],
-            ['G', 'Am', 'F', 'C'],
+            ['Am', 'F', 'G', 'C'],      // 修正: V開始を避ける
             ['F', 'C', 'G', 'Am'],
-            ['Em', 'Am', 'D', 'G'],
+            ['Em', 'Am', 'Dm', 'G'],    // 修正: D(II)をDm(ii)に変更
             ['C', 'G', 'Am', 'F'],
             ['Am', 'Dm', 'G', 'C'],
             ['F', 'G', 'Em', 'Am'],
             ['C', 'Am', 'Dm', 'G'],
             ['Dm', 'G', 'C', 'Am'],
-            ['G', 'Em', 'C', 'D'],
+            ['Am', 'Em', 'C', 'G'],     // 修正: V開始と不適切な終止を避ける
             ['Am', 'F', 'G', 'Em'],
             ['C', 'Em', 'F', 'G'],
             ['F', 'Am', 'G', 'C']
@@ -389,25 +557,34 @@ class MarkovChainChordGenerator {
         const length = options.length || 4;
         const targetKey = options.key || 'C';
         
-        // 開始コードの決定
+        // 開始コードの決定（音楽理論に基づく適切な開始音）
         let currentChord = options.startChord;
         if (!currentChord) {
-            const startCandidates = ['C', 'Am', 'F', 'G', 'Dm', 'Em'];
+            // トニック機能(I, iii, vi)とサブドミナント機能(ii, IV)から選択
+            const startCandidates = ['C', 'Am', 'F', 'Dm', 'Em'];
             currentChord = startCandidates[Math.floor(Math.random() * startCandidates.length)];
         }
 
         const progression = [currentChord];
 
-        // マルコフ連鎖による次のコード選択
+        // マルコフ連鎖による次のコード選択（重複回避機能付き）
         for (let i = 1; i < length; i++) {
-            const nextChord = this.selectNextChord(currentChord, transitions);
+            const nextChord = this.selectNextChord(currentChord, transitions, progression);
             if (nextChord) {
                 progression.push(nextChord);
                 currentChord = nextChord;
             } else {
-                // フォールバック: ランダム選択
-                const allChords = Object.keys(transitions);
-                currentChord = allChords[Math.floor(Math.random() * allChords.length)];
+                // フォールバック: 音楽理論に基づく適切なコード選択
+                const appropriateChords = ['C', 'Am', 'F', 'Dm', 'Em'].filter(chord => 
+                    chord !== currentChord && !progression.includes(chord)
+                );
+                if (appropriateChords.length > 0) {
+                    currentChord = appropriateChords[Math.floor(Math.random() * appropriateChords.length)];
+                } else {
+                    // 最終的なフォールバック
+                    const allChords = Object.keys(transitions);
+                    currentChord = allChords[Math.floor(Math.random() * allChords.length)];
+                }
                 progression.push(currentChord);
             }
         }
@@ -426,16 +603,38 @@ class MarkovChainChordGenerator {
     }
 
     /**
-     * 確率的に次のコードを選択
+     * 確率的に次のコードを選択（重複回避機能付き）
      */
-    static selectNextChord(currentChord, transitions) {
+    static selectNextChord(currentChord, transitions, progression = []) {
         const nextChords = transitions[currentChord];
         if (!nextChords) return null;
+
+        // 短いプログレッション（4コード以下）では重複を避ける
+        const avoidDuplicates = progression.length <= 4;
+        const availableChords = avoidDuplicates 
+            ? Object.entries(nextChords).filter(([chord]) => !progression.includes(chord))
+            : Object.entries(nextChords);
+
+        if (availableChords.length === 0) {
+            // 重複回避で選択肢がない場合は、元の選択肢を使用
+            return this.selectFromProbabilityDistribution(Object.entries(nextChords));
+        }
+
+        return this.selectFromProbabilityDistribution(availableChords);
+    }
+
+    /**
+     * 確率分布から選択
+     */
+    static selectFromProbabilityDistribution(chordProbabilityPairs) {
+        // 確率を正規化
+        const totalProbability = chordProbabilityPairs.reduce((sum, [, prob]) => sum + prob, 0);
+        const normalizedPairs = chordProbabilityPairs.map(([chord, prob]) => [chord, prob / totalProbability]);
 
         const random = Math.random();
         let cumulativeProbability = 0;
 
-        for (const [chord, probability] of Object.entries(nextChords)) {
+        for (const [chord, probability] of normalizedPairs) {
             cumulativeProbability += probability;
             if (random <= cumulativeProbability) {
                 return chord;
@@ -443,7 +642,7 @@ class MarkovChainChordGenerator {
         }
 
         // フォールバック
-        return Object.keys(nextChords)[0];
+        return chordProbabilityPairs[0][0];
     }
 
     /**
