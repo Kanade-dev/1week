@@ -20,6 +20,15 @@
             <div class="challenge-card">
                 <div class="card-header">
                     <h2 class="card-title">今週のお題</h2>
+                    <div class="algorithm-selector">
+                        <label for="algorithmSelect" class="algorithm-label">アルゴリズム:</label>
+                        <select id="algorithmSelect" class="algorithm-select">
+                            <option value="simple">シンプル (ランダム選択)</option>
+                            <option value="advanced" selected>高度 (音楽理論ベース)</option>
+                            <option value="markov">マルコフ連鎖</option>
+                            <option value="functional">機能和声</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="result-area" id="resultArea">

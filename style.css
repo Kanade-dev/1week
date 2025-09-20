@@ -161,6 +161,56 @@ body {
     margin-bottom: 0.5rem;
 }
 
+/* Algorithm Selector */
+.algorithm-selector {
+    margin-top: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.algorithm-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.algorithm-select {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background: white;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 200px;
+}
+
+.algorithm-select:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.algorithm-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+}
+
+@media (max-width: 768px) {
+    .algorithm-selector {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .algorithm-select {
+        min-width: 100%;
+    }
+}
+
 /* Result Area */
 .result-area {
     margin-bottom: 3rem;

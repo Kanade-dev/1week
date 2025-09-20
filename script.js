@@ -167,13 +167,17 @@ function generateChallenge() {
     // 【核心アルゴリズム実行部分】
     let randomChord, randomInstrument, metadata = {};
     
+    // 選択されたアルゴリズムを取得
+    const algorithmSelect = document.getElementById('algorithmSelect');
+    const selectedMode = algorithmSelect ? algorithmSelect.value : 'advanced';
+    
     if (window.AlgorithmManager) {
-        // 高度アルゴリズム使用
-        const result = window.AlgorithmManager.generateAdvancedChallenge();
+        // 選択されたアルゴリズムで実行
+        const result = window.AlgorithmManager.generateChallenge(selectedMode);
         randomChord = result.chord;
         randomInstrument = result.instrument;
         metadata = result.metadata;
-        console.log('🎵 Advanced algorithm result:', metadata);
+        console.log(`🎵 ${selectedMode} algorithm result:`, metadata);
     } else {
         // フォールバック: シンプルアルゴリズム使用
         randomChord = getRandomItem(musicData.chordProgressions);
