@@ -96,6 +96,20 @@ const resultArea = document.getElementById('resultArea');
 const chordValue = document.getElementById('chordValue');
 const instrumentValue = document.getElementById('instrumentValue');
 
+// Enhanced UI elements
+const chordDetails = document.getElementById('chordDetails');
+const instrumentDetails = document.getElementById('instrumentDetails');
+const analysisResult = document.getElementById('analysisResult');
+const keyValue = document.getElementById('keyValue');
+const tempoValue = document.getElementById('tempoValue');
+const progressionName = document.getElementById('progressionName');
+const genreValue = document.getElementById('genreValue');
+const ensembleValue = document.getElementById('ensembleValue');
+const complexityValue = document.getElementById('complexityValue');
+const moodValue = document.getElementById('moodValue');
+const genreFitValue = document.getElementById('genreFitValue');
+const educationValue = document.getElementById('educationValue');
+
 /**
  * ランダム選択アルゴリズム - 核となるユーティリティ関数
  * 
@@ -136,6 +150,85 @@ function animateValueChange(element, newValue, delay = 0) {
             element.style.opacity = '1';
         }, 150);
     }, delay);
+}
+
+// Enhanced UI update function
+function updateEnhancedUI(metadata) {
+    if (!metadata.chordInfo) return;
+    
+    const chordInfo = metadata.chordInfo;
+    
+    // Update basic chord details
+    if (chordInfo.key) {
+        animateValueChange(keyValue, chordInfo.key, 100);
+    }
+    
+    if (chordInfo.tempo) {
+        const tempoText = `${chordInfo.tempo.bpm}BPM (${chordInfo.tempo.description})`;
+        animateValueChange(tempoValue, tempoText, 200);
+    }
+    
+    if (chordInfo.pattern) {
+        animateValueChange(progressionName, chordInfo.pattern.name || chordInfo.pattern.description, 300);
+    }
+    
+    // Update genre and ensemble info
+    if (chordInfo.genre) {
+        animateValueChange(genreValue, chordInfo.genre, 400);
+    }
+    
+    if (metadata.instrumentInfo) {
+        const ensembleText = metadata.instrumentInfo.description || `${metadata.instrumentInfo.instruments}`;
+        animateValueChange(ensembleValue, ensembleText, 500);
+    }
+    
+    // Update analysis if available
+    if (chordInfo.analysis) {
+        const analysis = chordInfo.analysis;
+        
+        // Complexity with color coding
+        if (analysis.complexity) {
+            complexityValue.textContent = analysis.complexity;
+            complexityValue.className = `complexity-${analysis.complexity}`;
+        }
+        
+        // Mood with color coding
+        if (analysis.mood) {
+            moodValue.textContent = analysis.mood;
+            moodValue.className = `mood-${analysis.mood}`;
+        }
+        
+        // Genre fit with color coding
+        if (analysis.genre_fit) {
+            genreFitValue.textContent = analysis.genre_fit;
+            genreFitValue.className = `genre-fit-${analysis.genre_fit}`;
+        }
+        
+        // Educational value with color coding
+        if (analysis.educational_value) {
+            educationValue.textContent = analysis.educational_value;
+            educationValue.className = `education-${analysis.educational_value}`;
+        }
+        
+        // Show analysis section
+        setTimeout(() => {
+            analysisResult.style.display = 'block';
+            analysisResult.style.opacity = '0';
+            analysisResult.style.transform = 'translateY(10px)';
+            
+            setTimeout(() => {
+                analysisResult.style.transition = 'all 0.3s ease';
+                analysisResult.style.opacity = '1';
+                analysisResult.style.transform = 'translateY(0)';
+            }, 50);
+        }, 600);
+    }
+    
+    // Show detail sections
+    setTimeout(() => {
+        chordDetails.style.display = 'block';
+        instrumentDetails.style.display = 'block';
+    }, 700);
 }
 
 /**
@@ -191,6 +284,9 @@ function generateChallenge() {
         // 結果表示 - 段階的アニメーション
         animateValueChange(chordValue, randomChord, 0);
         animateValueChange(instrumentValue, randomInstrument, 200);
+        
+        // Enhanced UI update
+        updateEnhancedUI(metadata);
         
         // メタデータをデータ属性として保存（デバッグ用）
         resultArea.dataset.metadata = JSON.stringify(metadata);
