@@ -95,22 +95,6 @@ const generateBtn = document.getElementById('generateBtn');
 const resultArea = document.getElementById('resultArea');
 const chordValue = document.getElementById('chordValue');
 const instrumentValue = document.getElementById('instrumentValue');
-const algorithmSelect = document.getElementById('algorithmSelect');
-
-// アルゴリズムモード管理
-let algorithmMode = 'simple'; // 'simple' または 'advanced'
-
-/**
- * アルゴリズムモード切り替え機能
- * @param {string} mode - 'simple' または 'advanced'
- */
-function setAlgorithmMode(mode) {
-    algorithmMode = mode;
-    if (algorithmSelect) {
-        algorithmSelect.value = mode;
-    }
-    console.log(`🎵 Algorithm mode changed to: ${mode}`);
-}
 
 /**
  * ランダム選択アルゴリズム - 核となるユーティリティ関数
@@ -155,27 +139,16 @@ function animateValueChange(element, newValue, delay = 0) {
 }
 
 /**
- * メインアルゴリズム実行関数 - コード進行と楽器をランダム生成
+ * メインアルゴリズム実行関数 - 音楽理論に基づくコード進行と楽器の生成
  * 
  * 【処理フロー】
  * 1. UI状態管理: ローディング状態を設定
- * 2. アルゴリズム実行: 
- *    - モードに応じてSimple/Advancedアルゴリズムを選択
- *    - コード進行をランダム選択/生成
- *    - 楽器組み合わせをランダム選択/生成
+ * 2. 高度アルゴリズム実行: 
+ *    - 音楽理論に基づく動的コード進行生成
+ *    - ジャンル・ムード・キーを考慮した楽器選択
+ *    - 音楽的に整合性のある組み合わせを生成
  * 3. 結果表示: アニメーション付きでUIに反映
  * 4. 状態復元: ローディング状態を解除
- * 
- * 【アルゴリズムの特徴】
- * Simple Mode:
- * - 2つの独立したランダム選択を並行実行
- * - 各選択は他に影響されない（独立性）
- * - 総合確率: 1/25 × 1/25 = 1/625 (各組み合わせ0.16%)
- * 
- * Advanced Mode:
- * - 音楽理論に基づく動的生成
- * - ジャンル・ムード・キーを考慮した関連性のある選択
- * - より音楽的に整合性のある組み合わせを生成
  * 
  * 【ユーザビリティ考慮】
  * - 人工的な遅延でローディング感を演出
@@ -194,19 +167,19 @@ function generateChallenge() {
     // 【核心アルゴリズム実行部分】
     let randomChord, randomInstrument, metadata = {};
     
-    if (algorithmMode === 'advanced' && window.AlgorithmManager) {
-        // 拡張アルゴリズム使用
+    if (window.AlgorithmManager) {
+        // 高度アルゴリズム使用
         const result = window.AlgorithmManager.generateAdvancedChallenge();
         randomChord = result.chord;
         randomInstrument = result.instrument;
         metadata = result.metadata;
         console.log('🎵 Advanced algorithm result:', metadata);
     } else {
-        // シンプルアルゴリズム使用（デフォルト）
+        // フォールバック: シンプルアルゴリズム使用
         randomChord = getRandomItem(musicData.chordProgressions);
         randomInstrument = getRandomItem(musicData.instruments);
-        metadata = { mode: 'simple' };
-        console.log('🎵 Simple algorithm used');
+        metadata = { mode: 'fallback' };
+        console.log('🎵 Fallback algorithm used');
     }
     
     // UX向上のための人工的遅延とアニメーション
@@ -236,13 +209,6 @@ function generateChallenge() {
 
 // Event listeners
 generateBtn.addEventListener('click', generateChallenge);
-
-// Algorithm selector event listener
-if (algorithmSelect) {
-    algorithmSelect.addEventListener('change', function() {
-        setAlgorithmMode(this.value);
-    });
-}
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (event) => {
@@ -292,10 +258,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     console.log('🎵 1Week Music Challenge - Ready to generate topics!');
-    console.log('🎵 Current algorithm mode:', algorithmMode);
     console.log('🎵 Enhanced algorithms available:', !!window.AlgorithmManager);
-    
-    // 開発者向け: アルゴリズムモード切り替え関数をグローバルに公開
-    window.setAlgorithmMode = setAlgorithmMode;
-    window.getCurrentMode = () => algorithmMode;
 });
